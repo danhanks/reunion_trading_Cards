@@ -97,8 +97,31 @@
             letter-spacing: 1px;
         }
         
+        select {
+            padding: 12px;
+            font-size: 16px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            transition: border-color 0.3s;
+            background: white;
+        }
+
+        select:focus {
+            outline: none;
+            border-color: #8b4513;
+        }
+
+        .birthday-row {
+            display: flex;
+            gap: 10px;
+        }
+
+        .birthday-row select {
+            flex: 1;
+        }
+
         input[type="text"],
-        input[type="date"],
         input[type="file"],
         textarea {
             width: 100%;
@@ -111,7 +134,6 @@
         }
         
         input[type="text"]:focus,
-        input[type="date"]:focus,
         textarea:focus {
             outline: none;
             border-color: #8b4513;
@@ -184,11 +206,11 @@
         }
         
         .preview-photo {
-            width: 100%;
-            height: 120px;
+            width: 65%;
+            aspect-ratio: 3 / 4;
+            margin: 0 auto 10px;
             background: #e8d4a8;
             border-radius: 8px;
-            margin-bottom: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -274,7 +296,7 @@
     <div class="container">
         <div class="header">
             <h1>EPHRAIM K. HANKS</h1>
-            <h2>Reunion Trading Cards</h2>
+            <h2>Reunion Trading Cards for Cousins</h2>
             <p>Create your card - Print double-sided - Trade with family!</p>
         </div>
         
@@ -289,9 +311,33 @@
                 
                 <div class="form-group">
                     <label>Birthday *</label>
-                    <input type="date" id="birthday">
+                    <div class="birthday-row">
+                        <select id="birthMonth">
+                            <option value="">Month</option>
+                            <option value="January">January</option>
+                            <option value="February">February</option>
+                            <option value="March">March</option>
+                            <option value="April">April</option>
+                            <option value="May">May</option>
+                            <option value="June">June</option>
+                            <option value="July">July</option>
+                            <option value="August">August</option>
+                            <option value="September">September</option>
+                            <option value="October">October</option>
+                            <option value="November">November</option>
+                            <option value="December">December</option>
+                        </select>
+                        <select id="birthDay">
+                            <option value="">Day</option>
+                        </select>
+                    </div>
                 </div>
-                
+
+                <div class="form-group">
+                    <label>City, State</label>
+                    <input type="text" id="cityState" placeholder="e.g. Provo, UT">
+                </div>
+
                 <div class="form-group">
                     <label>Interests & Hobbies</label>
                     <textarea id="interests" rows="3" placeholder="What do you love to do?"></textarea>
@@ -320,6 +366,7 @@
                     <div class="preview-photo" id="previewPhoto">No Photo</div>
                     <div class="preview-name" id="previewName">Your Name</div>
                     <div class="preview-birthday" id="previewBirthday" style="display: none;"></div>
+                    <div class="preview-birthday" id="previewCityState" style="display: none;"></div>
                     <div id="previewInterests" style="display: none;">
                         <div class="preview-section-title">INTERESTS</div>
                         <div class="preview-section-content"></div>
@@ -348,10 +395,22 @@
         let formData = {
             name: '',
             birthday: '',
+            cityState: '',
             interests: '',
             story: '',
             photo: null
         };
+
+        // Populate day dropdown (1-31)
+        (function populateDays() {
+            const daySelect = document.getElementById('birthDay');
+            for (let i = 1; i <= 31; i++) {
+                const opt = document.createElement('option');
+                opt.value = i;
+                opt.textContent = i;
+                daySelect.appendChild(opt);
+            }
+        })();
 
         // Load Ephraim Hanks portrait for the vignette
         let ephHanksPortrait = null;
@@ -372,10 +431,13 @@
         // Update form data and preview
         function updateFormData() {
             formData.name = document.getElementById('name').value;
-            formData.birthday = document.getElementById('birthday').value;
+            const month = document.getElementById('birthMonth').value;
+            const day = document.getElementById('birthDay').value;
+            formData.birthday = (month && day) ? `${month} ${day}` : '';
+            formData.cityState = document.getElementById('cityState').value;
             formData.interests = document.getElementById('interests').value;
             formData.story = document.getElementById('story').value;
-            
+
             updatePreview();
             updateGenerateButton();
         }
@@ -385,12 +447,19 @@
             document.getElementById('previewName').textContent = formData.name || 'Your Name';
             
             if (formData.birthday) {
-                document.getElementById('previewBirthday').textContent = `Born: ${formData.birthday}`;
+                document.getElementById('previewBirthday').textContent = `Birthday: ${formData.birthday}`;
                 document.getElementById('previewBirthday').style.display = 'block';
             } else {
                 document.getElementById('previewBirthday').style.display = 'none';
             }
             
+            if (formData.cityState) {
+                document.getElementById('previewCityState').textContent = formData.cityState;
+                document.getElementById('previewCityState').style.display = 'block';
+            } else {
+                document.getElementById('previewCityState').style.display = 'none';
+            }
+
             if (formData.interests) {
                 const interestsDiv = document.getElementById('previewInterests');
                 const content = formData.interests.slice(0, 100) + (formData.interests.length > 100 ? '...' : '');
@@ -431,6 +500,13 @@
                 const reader = new FileReader();
                 reader.onload = function(event) {
                     formData.photo = event.target.result;
+                    // Get natural image dimensions for aspect-ratio-preserving PDF rendering
+                    const img = new Image();
+                    img.onload = function() {
+                        formData.photoWidth = img.naturalWidth;
+                        formData.photoHeight = img.naturalHeight;
+                    };
+                    img.src = event.target.result;
                     const photoDiv = document.getElementById('previewPhoto');
                     photoDiv.style.backgroundImage = `url(${event.target.result})`;
                     photoDiv.textContent = '';
@@ -441,7 +517,9 @@
         
         // Add event listeners
         document.getElementById('name').addEventListener('input', updateFormData);
-        document.getElementById('birthday').addEventListener('change', updateFormData);
+        document.getElementById('birthMonth').addEventListener('change', updateFormData);
+        document.getElementById('birthDay').addEventListener('change', updateFormData);
+        document.getElementById('cityState').addEventListener('input', updateFormData);
         document.getElementById('interests').addEventListener('input', updateFormData);
         document.getElementById('story').addEventListener('input', updateFormData);
         
@@ -552,19 +630,39 @@
             pdf.setLineWidth(0.3);
             pdf.line(x + 10, currentY, x + width - 10, currentY);
 
-            // Photo area
+            // Photo area (portrait orientation)
             const photoY = currentY + 2;
-            const photoHeight = 32;
+            const photoWidth = width * 0.55;
+            const photoHeight = photoWidth * (4 / 3);
+            const photoX = x + (width - photoWidth) / 2;
             if (formData.photo) {
                 try {
-                    pdf.addImage(formData.photo, 'JPEG', x + 5, photoY, width - 10, photoHeight, undefined, 'FAST');
+                    // Fit image within the photo box while preserving aspect ratio
+                    let imgW = photoWidth;
+                    let imgH = photoHeight;
+                    if (formData.photoWidth && formData.photoHeight) {
+                        const imgAspect = formData.photoWidth / formData.photoHeight;
+                        const boxAspect = photoWidth / photoHeight;
+                        if (imgAspect > boxAspect) {
+                            // Image is wider than box — fit to width, shrink height
+                            imgW = photoWidth;
+                            imgH = photoWidth / imgAspect;
+                        } else {
+                            // Image is taller than box — fit to height, shrink width
+                            imgH = photoHeight;
+                            imgW = photoHeight * imgAspect;
+                        }
+                    }
+                    const imgX = photoX + (photoWidth - imgW) / 2;
+                    const imgY = photoY + (photoHeight - imgH) / 2;
+                    pdf.addImage(formData.photo, 'JPEG', imgX, imgY, imgW, imgH, undefined, 'FAST');
                 } catch (e) {
                     pdf.setFillColor(232, 212, 168);
-                    pdf.roundedRect(x + 5, photoY, width - 10, photoHeight, 2, 2, 'F');
+                    pdf.roundedRect(photoX, photoY, photoWidth, photoHeight, 2, 2, 'F');
                 }
             } else {
                 pdf.setFillColor(232, 212, 168);
-                pdf.roundedRect(x + 5, photoY, width - 10, photoHeight, 2, 2, 'F');
+                pdf.roundedRect(photoX, photoY, photoWidth, photoHeight, 2, 2, 'F');
                 pdf.setFontSize(8);
                 pdf.setTextColor(139, 69, 19);
                 pdf.text('No Photo', x + width / 2, photoY + photoHeight / 2, { align: 'center' });
@@ -585,7 +683,16 @@
                 pdf.setFontSize(7);
                 pdf.setFont('times', 'italic');
                 pdf.setTextColor(92, 64, 51);
-                pdf.text(`Born: ${formData.birthday}`, x + width / 2, currentY, { align: 'center' });
+                pdf.text(`Birthday: ${formData.birthday}`, x + width / 2, currentY, { align: 'center' });
+                currentY += 4;
+            }
+
+            // City, State
+            if (formData.cityState) {
+                pdf.setFontSize(7);
+                pdf.setFont('times', 'normal');
+                pdf.setTextColor(92, 64, 51);
+                pdf.text(formData.cityState, x + width / 2, currentY, { align: 'center' });
                 currentY += 4;
             }
 
