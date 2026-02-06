@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ephraim K. Hanks Reunion - Trading Cards for Cousins</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Georgia', serif;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #8b4513 0%, #5c4033 100%);
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 40px auto;
+            background: #f4e4bc;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+            overflow: hidden;
+            border: 4px solid #5c4033;
+        }
+
+        .header {
+            background: linear-gradient(90deg, #8b4513 0%, #a0522d 50%, #8b4513 100%);
+            padding: 40px 30px;
+            text-align: center;
+            border-bottom: 4px solid #5c4033;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 36px;
+            font-weight: bold;
+            color: #f4e4bc;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.4);
+            letter-spacing: 2px;
+        }
+
+        .header h2 {
+            margin: 10px 0 0;
+            font-size: 28px;
+            font-weight: normal;
+            color: #d4a574;
+            letter-spacing: 4px;
+        }
+
+        .header p {
+            margin: 15px 0 0;
+            font-size: 14px;
+            color: #e8d4a8;
+            font-family: Georgia, serif;
+            font-style: italic;
+        }
+        
+        .content {
+            display: flex;
+            gap: 40px;
+            padding: 40px;
+        }
+        
+        .form-section {
+            flex: 1;
+        }
+        
+        .preview-section {
+            flex: 0 0 260px;
+        }
+        
+        h3 {
+            margin-top: 0;
+            font-size: 20px;
+            color: #5c4033;
+            border-bottom: 3px solid #8b4513;
+            padding-bottom: 10px;
+            margin-bottom: 25px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 13px;
+            font-weight: bold;
+            color: #555;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        input[type="text"],
+        input[type="date"],
+        input[type="file"],
+        textarea {
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            transition: border-color 0.3s;
+        }
+        
+        input[type="text"]:focus,
+        input[type="date"]:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #8b4513;
+        }
+        
+        textarea {
+            resize: vertical;
+            font-size: 14px;
+        }
+        
+        input[type="file"] {
+            cursor: pointer;
+            background: white;
+            font-size: 14px;
+        }
+        
+        button {
+            width: 100%;
+            padding: 16px;
+            font-size: 18px;
+            font-weight: bold;
+            color: #f4e4bc;
+            background: linear-gradient(90deg, #5c4033 0%, #8b4513 50%, #5c4033 100%);
+            border: 2px solid #3d2817;
+            border-radius: 8px;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 4px 15px rgba(92, 64, 51, 0.4);
+        }
+
+        button:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(139, 69, 19, 0.5);
+        }
+        
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+        
+        .requirement-note {
+            margin-top: 10px;
+            font-size: 12px;
+            color: #999;
+            text-align: center;
+            font-style: italic;
+        }
+        
+        .card-preview {
+            width: 100%;
+            aspect-ratio: 2.5 / 3.5;
+            background: #f4e4bc;
+            border: 3px solid #5c4033;
+            border-radius: 12px;
+            padding: 12px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+        }
+
+        .preview-title {
+            font-size: 8px;
+            font-weight: bold;
+            color: #5c4033;
+            text-align: center;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .preview-photo {
+            width: 100%;
+            height: 120px;
+            background: #e8d4a8;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #8b4513;
+            font-size: 12px;
+            background-size: cover;
+            background-position: center;
+            border: 1px solid #8b4513;
+        }
+        
+        .preview-name {
+            font-size: 14px;
+            font-weight: bold;
+            color: #3d2817;
+            text-align: center;
+            margin-bottom: 4px;
+            line-height: 1.2;
+        }
+
+        .preview-birthday {
+            font-size: 9px;
+            color: #5c4033;
+            text-align: center;
+            margin-bottom: 6px;
+            font-style: italic;
+        }
+        
+        .preview-section-title {
+            font-size: 9px;
+            font-weight: bold;
+            color: #8b4513;
+            margin-bottom: 3px;
+        }
+        
+        .preview-section-content {
+            font-size: 8px;
+            color: #444;
+            line-height: 1.3;
+            margin-bottom: 8px;
+        }
+        
+        .preview-story-content {
+            font-size: 7px;
+        }
+        
+        .tip-box {
+            margin-top: 20px;
+            padding: 15px;
+            background: #e8d4a8;
+            border-radius: 8px;
+            font-size: 11px;
+            color: #5c4033;
+            line-height: 1.5;
+            border: 1px solid #8b4513;
+        }
+
+        .tip-box strong {
+            color: #8b4513;
+        }
+        
+        .footer {
+            max-width: 900px;
+            margin: 30px auto 0;
+            padding: 0 20px 40px;
+            text-align: center;
+            color: rgba(255,255,255,0.9);
+            font-size: 13px;
+            font-family: Georgia, serif;
+        }
+        
+        @media (max-width: 768px) {
+            .content {
+                flex-direction: column;
+            }
+            
+            .preview-section {
+                flex: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>EPHRAIM K. HANKS</h1>
+            <h2>Reunion Trading Cards</h2>
+            <p>Create your card - Print double-sided - Trade with family!</p>
+        </div>
+        
+        <div class="content">
+            <div class="form-section">
+                <h3>Your Information</h3>
+                
+                <div class="form-group">
+                    <label>Name *</label>
+                    <input type="text" id="name" placeholder="Enter your name">
+                </div>
+                
+                <div class="form-group">
+                    <label>Birthday *</label>
+                    <input type="date" id="birthday">
+                </div>
+                
+                <div class="form-group">
+                    <label>Interests & Hobbies</label>
+                    <textarea id="interests" rows="3" placeholder="What do you love to do?"></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label>A Fun Story or Memory</label>
+                    <textarea id="story" rows="4" placeholder="Share something memorable about yourself..."></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label>Your Photo</label>
+                    <input type="file" id="photo" accept="image/*">
+                </div>
+                
+                <button id="generateBtn" disabled>Generate PDF Cards</button>
+                
+                <p class="requirement-note" id="requirementNote">* Name and birthday are required</p>
+            </div>
+            
+            <div class="preview-section">
+                <h3>Card Preview</h3>
+                
+                <div class="card-preview">
+                    <div class="preview-title">Ephraim K. Hanks Reunion</div>
+                    <div class="preview-photo" id="previewPhoto">No Photo</div>
+                    <div class="preview-name" id="previewName">Your Name</div>
+                    <div class="preview-birthday" id="previewBirthday" style="display: none;"></div>
+                    <div id="previewInterests" style="display: none;">
+                        <div class="preview-section-title">INTERESTS</div>
+                        <div class="preview-section-content"></div>
+                    </div>
+                    <div id="previewStory" style="display: none;">
+                        <div class="preview-section-title">MY STORY</div>
+                        <div class="preview-section-content preview-story-content"></div>
+                    </div>
+                </div>
+                
+                <div class="tip-box">
+                    <strong>Tip:</strong><br>
+                    Your PDF has two pages - front and back! Print double-sided (flip on short edge) then cut to create 9 two-sided trading cards for the reunion.
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="footer">
+        <p>Print double-sided on cardstock (flip on short edge) - Cut carefully - Happy trails at the reunion!</p>
+    </div>
+
+    <script>
+        const { jsPDF } = window.jspdf;
+        
+        let formData = {
+            name: '',
+            birthday: '',
+            interests: '',
+            story: '',
+            photo: null
+        };
+
+        // Load Ephraim Hanks portrait for the vignette
+        let ephHanksPortrait = null;
+        (function loadEphHanksPortrait() {
+            const img = new Image();
+            img.crossOrigin = 'anonymous';
+            img.onload = function() {
+                const canvas = document.createElement('canvas');
+                canvas.width = img.width;
+                canvas.height = img.height;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0);
+                ephHanksPortrait = canvas.toDataURL('image/jpeg', 0.9);
+            };
+            img.src = 'EphHanksPortrait2.jpg';
+        })();
+        
+        // Update form data and preview
+        function updateFormData() {
+            formData.name = document.getElementById('name').value;
+            formData.birthday = document.getElementById('birthday').value;
+            formData.interests = document.getElementById('interests').value;
+            formData.story = document.getElementById('story').value;
+            
+            updatePreview();
+            updateGenerateButton();
+        }
+        
+        // Update preview
+        function updatePreview() {
+            document.getElementById('previewName').textContent = formData.name || 'Your Name';
+            
+            if (formData.birthday) {
+                document.getElementById('previewBirthday').textContent = `Born: ${formData.birthday}`;
+                document.getElementById('previewBirthday').style.display = 'block';
+            } else {
+                document.getElementById('previewBirthday').style.display = 'none';
+            }
+            
+            if (formData.interests) {
+                const interestsDiv = document.getElementById('previewInterests');
+                const content = formData.interests.slice(0, 100) + (formData.interests.length > 100 ? '...' : '');
+                interestsDiv.querySelector('.preview-section-content').textContent = content;
+                interestsDiv.style.display = 'block';
+            } else {
+                document.getElementById('previewInterests').style.display = 'none';
+            }
+            
+            if (formData.story) {
+                const storyDiv = document.getElementById('previewStory');
+                const content = formData.story.slice(0, 150) + (formData.story.length > 150 ? '...' : '');
+                storyDiv.querySelector('.preview-section-content').textContent = content;
+                storyDiv.style.display = 'block';
+            } else {
+                document.getElementById('previewStory').style.display = 'none';
+            }
+        }
+        
+        // Update generate button state
+        function updateGenerateButton() {
+            const btn = document.getElementById('generateBtn');
+            const note = document.getElementById('requirementNote');
+            
+            if (formData.name && formData.birthday) {
+                btn.disabled = false;
+                note.style.display = 'none';
+            } else {
+                btn.disabled = true;
+                note.style.display = 'block';
+            }
+        }
+        
+        // Handle photo upload
+        document.getElementById('photo').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    formData.photo = event.target.result;
+                    const photoDiv = document.getElementById('previewPhoto');
+                    photoDiv.style.backgroundImage = `url(${event.target.result})`;
+                    photoDiv.textContent = '';
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+        
+        // Add event listeners
+        document.getElementById('name').addEventListener('input', updateFormData);
+        document.getElementById('birthday').addEventListener('change', updateFormData);
+        document.getElementById('interests').addEventListener('input', updateFormData);
+        document.getElementById('story').addEventListener('input', updateFormData);
+        
+        // Draw oval vignette of Ephraim Hanks using frame overlay technique
+        function drawEphHanksVignette(pdf, centerX, centerY, ovalWidth, ovalHeight) {
+            if (!ephHanksPortrait) return;
+
+            const radiusX = ovalWidth / 2;
+            const radiusY = ovalHeight / 2;
+
+            // The original image is roughly 3:4 aspect with oval centered
+            // We need to draw the image sized so the oval portion fills our target oval
+            // The oval in the image takes up about 85% width and 80% height (text at bottom)
+            const imgWidth = ovalWidth * 1.18;
+            const imgHeight = ovalHeight * 1.35;
+            const imgX = centerX - imgWidth / 2;
+            const imgY = centerY - imgHeight / 2 + (imgHeight * 0.08); // Shift up to crop text
+
+            try {
+                pdf.addImage(ephHanksPortrait, 'JPEG', imgX, imgY, imgWidth, imgHeight, undefined, 'FAST');
+            } catch (e) {
+                console.log('Could not add Ephraim Hanks portrait:', e);
+                return;
+            }
+
+            // Now overlay the parchment color around the oval to hide the white background
+            // We'll draw a filled rectangle with an unfilled ellipse "punched out"
+            // Since jsPDF doesn't support compound paths easily, we'll draw corner covers
+
+            pdf.setFillColor(244, 228, 188); // Parchment color
+
+            // Draw rectangles in corners and edges to mask non-oval parts
+            const padding = 2;
+            const boxLeft = imgX - padding;
+            const boxRight = imgX + imgWidth + padding;
+            const boxTop = imgY - padding;
+            const boxBottom = imgY + imgHeight + padding;
+
+            // Top edge
+            pdf.rect(boxLeft, boxTop, imgWidth + padding * 2, centerY - radiusY - imgY + padding, 'F');
+            // Bottom edge
+            pdf.rect(boxLeft, centerY + radiusY, imgWidth + padding * 2, boxBottom - (centerY + radiusY), 'F');
+            // Left edge
+            pdf.rect(boxLeft, centerY - radiusY, centerX - radiusX - imgX + padding, ovalHeight, 'F');
+            // Right edge
+            pdf.rect(centerX + radiusX, centerY - radiusY, boxRight - (centerX + radiusX), ovalHeight, 'F');
+
+            // Draw corner covers using multiple small rectangles to approximate oval mask
+            const steps = 12;
+            for (let i = 0; i < steps; i++) {
+                const angle = (i / steps) * Math.PI / 2;
+                const nextAngle = ((i + 1) / steps) * Math.PI / 2;
+
+                // Calculate points on ellipse
+                const ex = Math.cos(angle) * radiusX;
+                const ey = Math.sin(angle) * radiusY;
+
+                // Top-left corner covers
+                const tlX = centerX - ex;
+                const tlY = centerY - ey;
+                pdf.rect(boxLeft, tlY - 0.5, tlX - boxLeft + 0.3, 1.2, 'F');
+
+                // Top-right corner covers
+                const trX = centerX + ex;
+                pdf.rect(trX - 0.3, tlY - 0.5, boxRight - trX + 0.3, 1.2, 'F');
+
+                // Bottom-left corner covers
+                const blY = centerY + ey;
+                pdf.rect(boxLeft, blY - 0.5, tlX - boxLeft + 0.3, 1.2, 'F');
+
+                // Bottom-right corner covers
+                pdf.rect(trX - 0.3, blY - 0.5, boxRight - trX + 0.3, 1.2, 'F');
+            }
+
+            // Draw oval border on top
+            pdf.setDrawColor(92, 64, 51);
+            pdf.setLineWidth(0.5);
+            pdf.ellipse(centerX, centerY, radiusX, radiusY, 'S');
+
+            // Draw a second slightly larger border for emphasis
+            pdf.setLineWidth(0.3);
+            pdf.ellipse(centerX, centerY, radiusX + 0.4, radiusY + 0.5, 'S');
+        }
+
+        // Draw a single card (front side)
+        function drawCardFront(pdf, x, y, width, height) {
+            // Card border and background - parchment color
+            pdf.setFillColor(244, 228, 188);
+            pdf.setDrawColor(92, 64, 51);
+            pdf.setLineWidth(0.8);
+            pdf.roundedRect(x, y, width, height, 3, 3, 'FD');
+
+            // Decorative inner border - darker brown
+            pdf.setDrawColor(139, 69, 19);
+            pdf.setLineWidth(0.5);
+            pdf.roundedRect(x + 2, y + 2, width - 4, height - 4, 2, 2);
+
+            // Reunion title at top
+            let currentY = y + 7;
+            pdf.setFontSize(7);
+            pdf.setFont('times', 'bold');
+            pdf.setTextColor(92, 64, 51);
+            pdf.text('EPHRAIM K. HANKS REUNION', x + width / 2, currentY, { align: 'center' });
+
+            // Decorative line under title
+            currentY += 2;
+            pdf.setDrawColor(139, 69, 19);
+            pdf.setLineWidth(0.3);
+            pdf.line(x + 10, currentY, x + width - 10, currentY);
+
+            // Photo area
+            const photoY = currentY + 2;
+            const photoHeight = 32;
+            if (formData.photo) {
+                try {
+                    pdf.addImage(formData.photo, 'JPEG', x + 5, photoY, width - 10, photoHeight, undefined, 'FAST');
+                } catch (e) {
+                    pdf.setFillColor(232, 212, 168);
+                    pdf.roundedRect(x + 5, photoY, width - 10, photoHeight, 2, 2, 'F');
+                }
+            } else {
+                pdf.setFillColor(232, 212, 168);
+                pdf.roundedRect(x + 5, photoY, width - 10, photoHeight, 2, 2, 'F');
+                pdf.setFontSize(8);
+                pdf.setTextColor(139, 69, 19);
+                pdf.text('No Photo', x + width / 2, photoY + photoHeight / 2, { align: 'center' });
+            }
+
+            // Name section
+            currentY = photoY + photoHeight + 5;
+            pdf.setFontSize(11);
+            pdf.setFont('times', 'bold');
+            pdf.setTextColor(61, 40, 23);
+            const nameLines = pdf.splitTextToSize(formData.name || 'Your Name', width - 12);
+            pdf.text(nameLines, x + width / 2, currentY, { align: 'center' });
+            currentY += nameLines.length * 4.5;
+
+            // Birthday
+            if (formData.birthday) {
+                currentY += 1;
+                pdf.setFontSize(7);
+                pdf.setFont('times', 'italic');
+                pdf.setTextColor(92, 64, 51);
+                pdf.text(`Born: ${formData.birthday}`, x + width / 2, currentY, { align: 'center' });
+                currentY += 4;
+            }
+
+            // Interests section
+            if (formData.interests) {
+                currentY += 1;
+                pdf.setFontSize(6.5);
+                pdf.setFont('times', 'bold');
+                pdf.setTextColor(139, 69, 19);
+                pdf.text('INTERESTS', x + 6, currentY);
+                currentY += 3;
+
+                pdf.setFont('times', 'normal');
+                pdf.setFontSize(6.5);
+                pdf.setTextColor(61, 40, 23);
+                const interestLines = pdf.splitTextToSize(formData.interests, width - 12);
+                const maxInterestLines = 3;
+                interestLines.slice(0, maxInterestLines).forEach((line) => {
+                    pdf.text(line, x + 6, currentY);
+                    currentY += 2.8;
+                });
+            }
+
+            // Story section
+            if (formData.story) {
+                currentY += 1;
+                pdf.setFontSize(6.5);
+                pdf.setFont('times', 'bold');
+                pdf.setTextColor(139, 69, 19);
+                pdf.text('MY STORY', x + 6, currentY);
+                currentY += 3;
+
+                pdf.setFont('times', 'normal');
+                pdf.setFontSize(6);
+                pdf.setTextColor(61, 40, 23);
+                const storyLines = pdf.splitTextToSize(formData.story, width - 12);
+                const remainingSpace = (y + height - 4) - currentY;
+                const maxStoryLines = Math.floor(remainingSpace / 2.5);
+                storyLines.slice(0, maxStoryLines).forEach((line) => {
+                    if (currentY < y + height - 4) {
+                        pdf.text(line, x + 6, currentY);
+                        currentY += 2.5;
+                    }
+                });
+            }
+
+            // Ephraim Hanks oval vignette in lower left corner
+            const vignetteWidth = 12;
+            const vignetteHeight = 15;
+            const vignetteCenterX = x + 10;
+            const vignetteCenterY = y + height - 12;
+            drawEphHanksVignette(pdf, vignetteCenterX, vignetteCenterY, vignetteWidth, vignetteHeight);
+        }
+
+        // Draw a single card (back side)
+        function drawCardBack(pdf, x, y, width, height) {
+            // Card border and background - parchment color
+            pdf.setFillColor(244, 228, 188);
+            pdf.setDrawColor(92, 64, 51);
+            pdf.setLineWidth(0.8);
+            pdf.roundedRect(x, y, width, height, 3, 3, 'FD');
+
+            // Decorative inner border
+            pdf.setDrawColor(139, 69, 19);
+            pdf.setLineWidth(0.5);
+            pdf.roundedRect(x + 2, y + 2, width - 4, height - 4, 2, 2);
+
+            // Second decorative border
+            pdf.setLineWidth(0.3);
+            pdf.roundedRect(x + 4, y + 4, width - 8, height - 8, 1.5, 1.5);
+
+            // Center content area
+            const centerY = y + height / 2;
+
+            // Decorative top flourish
+            pdf.setDrawColor(139, 69, 19);
+            pdf.setLineWidth(0.4);
+            pdf.line(x + 15, centerY - 25, x + width - 15, centerY - 25);
+            pdf.line(x + 20, centerY - 23, x + width - 20, centerY - 23);
+
+            // Main title
+            pdf.setFontSize(10);
+            pdf.setFont('times', 'bold');
+            pdf.setTextColor(92, 64, 51);
+            pdf.text('EPHRAIM K. HANKS', x + width / 2, centerY - 15, { align: 'center' });
+
+            // Subtitle
+            pdf.setFontSize(12);
+            pdf.text('FAMILY REUNION', x + width / 2, centerY - 8, { align: 'center' });
+
+            // Year/motto area
+            pdf.setFontSize(8);
+            pdf.setFont('times', 'italic');
+            pdf.setTextColor(139, 69, 19);
+            pdf.text('Pioneer Heritage', x + width / 2, centerY + 2, { align: 'center' });
+
+            // Decorative wagon wheel or star pattern (simple version)
+            pdf.setDrawColor(139, 69, 19);
+            pdf.setLineWidth(0.3);
+            const starCenterY = centerY + 15;
+            const starRadius = 8;
+            // Draw simple star/compass points
+            for (let i = 0; i < 8; i++) {
+                const angle = (i * Math.PI) / 4;
+                const innerR = starRadius * 0.4;
+                const x1 = x + width / 2 + Math.cos(angle) * innerR;
+                const y1 = starCenterY + Math.sin(angle) * innerR;
+                const x2 = x + width / 2 + Math.cos(angle) * starRadius;
+                const y2 = starCenterY + Math.sin(angle) * starRadius;
+                pdf.line(x1, y1, x2, y2);
+            }
+            // Circle around star
+            pdf.setLineWidth(0.4);
+            pdf.circle(x + width / 2, starCenterY, starRadius + 2, 'S');
+
+            // Decorative bottom flourish
+            pdf.setLineWidth(0.4);
+            pdf.line(x + 20, centerY + 32, x + width - 20, centerY + 32);
+            pdf.line(x + 15, centerY + 34, x + width - 15, centerY + 34);
+
+            // Person's name at bottom
+            pdf.setFontSize(8);
+            pdf.setFont('times', 'bold');
+            pdf.setTextColor(61, 40, 23);
+            const nameLines = pdf.splitTextToSize(formData.name || '', width - 16);
+            if (nameLines.length > 0 && nameLines[0]) {
+                pdf.text(nameLines[0], x + width / 2, y + height - 8, { align: 'center' });
+            }
+        }
+        
+        // Generate PDF
+        document.getElementById('generateBtn').addEventListener('click', function() {
+            const pdf = new jsPDF({
+                orientation: 'portrait',
+                unit: 'mm',
+                format: 'letter'
+            });
+
+            const pageWidth = 215.9;
+            const pageHeight = 279.4;
+            const cardWidth = 63.5;
+            const cardHeight = 88.9;
+            const spacing = 5;
+
+            // Calculate positions for 3x3 grid
+            const cols = 3;
+            const rows = 3;
+
+            const totalWidth = (cardWidth * cols) + (spacing * (cols - 1));
+            const totalHeight = (cardHeight * rows) + (spacing * (rows - 1));
+            const startX = (pageWidth - totalWidth) / 2;
+            const startY = (pageHeight - totalHeight) / 2;
+
+            // PAGE 1: Draw 9 front-side cards
+            for (let row = 0; row < rows; row++) {
+                for (let col = 0; col < cols; col++) {
+                    const x = startX + (col * (cardWidth + spacing));
+                    const y = startY + (row * (cardHeight + spacing));
+                    drawCardFront(pdf, x, y, cardWidth, cardHeight);
+                }
+            }
+
+            // PAGE 2: Draw 9 back-side cards (mirrored horizontally for double-sided printing)
+            pdf.addPage();
+            for (let row = 0; row < rows; row++) {
+                for (let col = 0; col < cols; col++) {
+                    // Mirror columns: col 0 -> col 2, col 1 -> col 1, col 2 -> col 0
+                    const mirroredCol = cols - 1 - col;
+                    const x = startX + (mirroredCol * (cardWidth + spacing));
+                    const y = startY + (row * (cardHeight + spacing));
+                    drawCardBack(pdf, x, y, cardWidth, cardHeight);
+                }
+            }
+
+            pdf.save('ephraim-hanks-reunion-cards.pdf');
+        });
+    </script>
+</body>
+</html>
