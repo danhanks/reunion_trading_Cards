@@ -370,8 +370,8 @@
                 </div>
 
                 <div class="form-group">
-                    <label>Interests & Hobbies</label>
-                    <textarea id="interests" rows="3" placeholder="What do you love to do?"></textarea>
+                    <label>About Me</label>
+                    <textarea id="interests" rows="3" placeholder="What do you want people to know about you? E.g., hobbies / interests / something unique..."></textarea>
                 </div>
                 
                 
@@ -395,7 +395,7 @@
                     <div class="preview-birthday" id="previewBirthday" style="display: none;"></div>
                     <div class="preview-birthday" id="previewCityState" style="display: none;"></div>
                     <div id="previewInterests" style="display: none;">
-                        <div class="preview-section-title">INTERESTS</div>
+                        <div class="preview-section-title">ABOUT ME</div>
                         <div class="preview-section-content"></div>
                     </div>
                     <div class="preview-portraits">
@@ -715,7 +715,7 @@
                 pdf.setFontSize(6.5);
                 pdf.setFont('times', 'bold');
                 pdf.setTextColor(139, 69, 19);
-                pdf.text('INTERESTS', x + width / 2, currentY, { align: 'center' });
+                pdf.text('ABOUT ME', x + width / 2, currentY, { align: 'center' });
                 currentY += 3;
 
                 pdf.setFont('times', 'normal');
