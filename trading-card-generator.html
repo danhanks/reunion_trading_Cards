@@ -270,6 +270,16 @@
             width: 35px;
             height: auto;
         }
+
+        .preview-lineage {
+            font-size: 5px;
+            font-style: italic;
+            color: #5c4033;
+            text-align: center;
+            align-self: flex-end;
+            padding-bottom: 2px;
+            line-height: 1.4;
+        }
         
         .tip-box {
             margin-top: 20px;
@@ -402,6 +412,7 @@
                     </div>
                     <div class="preview-portraits">
                         <img id="previewEphraim" src="" class="preview-portrait-img">
+                        <div id="previewLineage" class="preview-lineage" style="display: none;">Descended from<br><span id="previewWifeName"></span></div>
                         <img id="previewWife" src="" class="preview-portrait-img" style="display: none;">
                     </div>
                 </div>
@@ -537,18 +548,26 @@
                 document.getElementById('previewStory').style.display = 'none';
             }
 
-            // Update wife portrait in preview
+            // Update wife portrait and lineage text in preview
             const wifeImg = document.getElementById('previewWife');
             const wifePortraitMap = {
                 harriett_decker: PORTRAIT_HARRIETT_DECKER,
                 jane_capener: PORTRAIT_JANE_CAPENER,
                 thisbe_read: PORTRAIT_THISBE_READ
             };
+            const wifeDisplayNames = {
+                harriett_decker: 'Harriett Decker',
+                jane_capener: 'Jane Capener',
+                thisbe_read: 'Thisbe Read'
+            };
             if (formData.wifeLineage && wifePortraitMap[formData.wifeLineage]) {
                 wifeImg.src = wifePortraitMap[formData.wifeLineage];
                 wifeImg.style.display = 'block';
+                document.getElementById('previewWifeName').textContent = 'Ephraim Hanks and ' + wifeDisplayNames[formData.wifeLineage];
+                document.getElementById('previewLineage').style.display = 'block';
             } else {
                 wifeImg.style.display = 'none';
+                document.getElementById('previewLineage').style.display = 'none';
             }
         }
         
@@ -761,9 +780,25 @@
             const portraitH = 15;
             drawPortrait(pdf, 'ephraim', x + 10, y + height - 12, portraitW, portraitH);
 
-            // Selected wife portrait in lower right corner
+            // Selected wife portrait in lower right corner + lineage text between portraits
             if (formData.wifeLineage) {
                 drawPortrait(pdf, formData.wifeLineage, x + width - 10, y + height - 12, portraitW, portraitH);
+
+                // Lineage text centered between the two portraits, pushed to bottom
+                const wifeDisplayNames = {
+                    harriett_decker: 'Harriett Decker',
+                    jane_capener: 'Jane Capener',
+                    thisbe_read: 'Thisbe Read'
+                };
+                const wifeName = wifeDisplayNames[formData.wifeLineage] || formData.wifeLineage;
+                pdf.setFontSize(5.5);
+                pdf.setFont('times', 'italic');
+                pdf.setTextColor(92, 64, 51);
+                // Two fixed lines; bottom line sits just above the inner card border (y+height-4)
+                const line2Y = y + height - 6;
+                const line1Y = line2Y - 2.8;
+                pdf.text('Descended from', x + width / 2, line1Y, { align: 'center' });
+                pdf.text('Ephraim Hanks and ' + wifeName, x + width / 2, line2Y, { align: 'center' });
             }
         }
 
