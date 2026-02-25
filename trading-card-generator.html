@@ -355,14 +355,14 @@
                 </div>
 
                 <div class="form-group">
-                    <label>City, State</label>
+                    <label>Your hometown: City, State</label>
                     <input type="text" id="cityState" placeholder="e.g. Provo, UT">
                 </div>
 
                 <div class="form-group">
-                    <label>Descended from Wife</label>
+                    <label>I descend from Ephraim Hanks and...</label>
                     <select id="wifeLineage" style="width: 100%;">
-                        <option value="">Select a wife...</option>
+                        <option value="">Choose one of Ephraim's wives...</option>
                         <option value="harriett_decker">Harriett Decker</option>
                         <option value="jane_capener">Jane Capener</option>
                         <option value="thisbe_read">Thisbe Read</option>
@@ -510,7 +510,7 @@
             }
             
             if (formData.cityState) {
-                document.getElementById('previewCityState').textContent = formData.cityState;
+                document.getElementById('previewCityState').textContent = 'Hometown: ' + formData.cityState;
                 document.getElementById('previewCityState').style.display = 'block';
             } else {
                 document.getElementById('previewCityState').style.display = 'none';
@@ -705,7 +705,7 @@
                 pdf.setFontSize(7);
                 pdf.setFont('times', 'normal');
                 pdf.setTextColor(92, 64, 51);
-                pdf.text(formData.cityState, x + width / 2, currentY, { align: 'center' });
+                pdf.text('Hometown: ' + formData.cityState, x + width / 2, currentY, { align: 'center' });
                 currentY += 4;
             }
 
