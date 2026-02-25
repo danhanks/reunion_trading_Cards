@@ -254,10 +254,6 @@
             margin-bottom: 8px;
         }
         
-        .preview-story-content {
-            font-size: 7px;
-        }
-
         .preview-portraits {
             display: flex;
             justify-content: space-between;
@@ -378,10 +374,6 @@
                     <textarea id="interests" rows="3" placeholder="What do you love to do?"></textarea>
                 </div>
                 
-                <div class="form-group">
-                    <label>A Fun Story or Memory</label>
-                    <textarea id="story" rows="4" placeholder="Share something memorable about yourself..."></textarea>
-                </div>
                 
                 <div class="form-group">
                     <label>Your Photo</label>
@@ -405,10 +397,6 @@
                     <div id="previewInterests" style="display: none;">
                         <div class="preview-section-title">INTERESTS</div>
                         <div class="preview-section-content"></div>
-                    </div>
-                    <div id="previewStory" style="display: none;">
-                        <div class="preview-section-title">MY STORY</div>
-                        <div class="preview-section-content preview-story-content"></div>
                     </div>
                     <div class="preview-portraits">
                         <img id="previewEphraim" src="" class="preview-portrait-img">
@@ -444,7 +432,6 @@
             cityState: '',
             wifeLineage: '',
             interests: '',
-            story: '',
             photo: null
         };
 
@@ -506,7 +493,6 @@
             formData.cityState = document.getElementById('cityState').value;
             formData.wifeLineage = document.getElementById('wifeLineage').value;
             formData.interests = document.getElementById('interests').value;
-            formData.story = document.getElementById('story').value;
 
             updatePreview();
             updateGenerateButton();
@@ -539,14 +525,6 @@
                 document.getElementById('previewInterests').style.display = 'none';
             }
             
-            if (formData.story) {
-                const storyDiv = document.getElementById('previewStory');
-                const content = formData.story.slice(0, 150) + (formData.story.length > 150 ? '...' : '');
-                storyDiv.querySelector('.preview-section-content').textContent = content;
-                storyDiv.style.display = 'block';
-            } else {
-                document.getElementById('previewStory').style.display = 'none';
-            }
 
             // Update wife portrait and lineage text in preview
             const wifeImg = document.getElementById('previewWife');
@@ -614,7 +592,6 @@
         document.getElementById('cityState').addEventListener('input', updateFormData);
         document.getElementById('wifeLineage').addEventListener('change', updateFormData);
         document.getElementById('interests').addEventListener('input', updateFormData);
-        document.getElementById('story').addEventListener('input', updateFormData);
         
         // Draw a small portrait image (PNG with transparent background) at the given position
         function drawPortrait(pdf, portraitKey, centerX, centerY, maxWidth, maxHeight) {
@@ -732,46 +709,26 @@
                 currentY += 4;
             }
 
-            // Interests section
+            // Interests section — centered in the gap between the two portrait thumbnails
             if (formData.interests) {
                 currentY += 1;
                 pdf.setFontSize(6.5);
                 pdf.setFont('times', 'bold');
                 pdf.setTextColor(139, 69, 19);
-                pdf.text('INTERESTS', x + 6, currentY);
+                pdf.text('INTERESTS', x + width / 2, currentY, { align: 'center' });
                 currentY += 3;
 
                 pdf.setFont('times', 'normal');
                 pdf.setFontSize(6.5);
                 pdf.setTextColor(61, 40, 23);
-                const interestLines = pdf.splitTextToSize(formData.interests, width - 12);
-                const maxInterestLines = 3;
+                // Width constrained to gap between inner edges of the two portrait thumbnails
+                const interestGapWidth = width - 34;
+                const interestLines = pdf.splitTextToSize(formData.interests, interestGapWidth);
+                // Text is centred between portraits so can extend into portrait row; stop above lineage text
+                const maxInterestLines = Math.max(0, Math.floor((y + height - 11 - currentY) / 2.8));
                 interestLines.slice(0, maxInterestLines).forEach((line) => {
-                    pdf.text(line, x + 6, currentY);
+                    pdf.text(line, x + width / 2, currentY, { align: 'center' });
                     currentY += 2.8;
-                });
-            }
-
-            // Story section
-            if (formData.story) {
-                currentY += 1;
-                pdf.setFontSize(6.5);
-                pdf.setFont('times', 'bold');
-                pdf.setTextColor(139, 69, 19);
-                pdf.text('MY STORY', x + 6, currentY);
-                currentY += 3;
-
-                pdf.setFont('times', 'normal');
-                pdf.setFontSize(6);
-                pdf.setTextColor(61, 40, 23);
-                const storyLines = pdf.splitTextToSize(formData.story, width - 12);
-                const remainingSpace = (y + height - 4) - currentY;
-                const maxStoryLines = Math.floor(remainingSpace / 2.5);
-                storyLines.slice(0, maxStoryLines).forEach((line) => {
-                    if (currentY < y + height - 4) {
-                        pdf.text(line, x + 6, currentY);
-                        currentY += 2.5;
-                    }
                 });
             }
 
