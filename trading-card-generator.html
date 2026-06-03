@@ -386,8 +386,8 @@
                 </div>
 
                 <div class="form-group">
-                    <label>About Me <span style="font-weight: normal; font-size: 0.85em; opacity: 0.7;">(75 characters max)</span></label>
-                    <textarea id="interests" rows="3" placeholder="What do you want people to know about you? E.g., hobbies / interests / something unique..."></textarea>
+                    <label>About Me <span style="font-weight: normal; font-size: 0.85em; opacity: 0.7;">(<span id="interestsCount">0</span>/75)</span></label>
+                    <textarea id="interests" rows="3" maxlength="75" placeholder="What do you want people to know about you? E.g., hobbies / interests / something unique..."></textarea>
                 </div>
                 
                 
@@ -609,7 +609,10 @@
         document.getElementById('birthDay').addEventListener('change', updateFormData);
         document.getElementById('cityState').addEventListener('input', updateFormData);
         document.getElementById('wifeLineage').addEventListener('change', updateFormData);
-        document.getElementById('interests').addEventListener('input', updateFormData);
+        document.getElementById('interests').addEventListener('input', function() {
+            document.getElementById('interestsCount').textContent = this.value.length;
+            updateFormData();
+        });
         
         // Draw a small portrait image (PNG with transparent background) at the given position
         function drawPortrait(pdf, portraitKey, centerX, centerY, maxWidth, maxHeight) {
