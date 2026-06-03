@@ -715,7 +715,7 @@
                 pdf.setFont('times', 'italic');
                 pdf.setTextColor(92, 64, 51);
                 pdf.text(`Birthday: ${formData.birthday}`, x + width / 2, currentY, { align: 'center' });
-                currentY += 4;
+                currentY += 3;
             }
 
             // City, State
@@ -724,12 +724,11 @@
                 pdf.setFont('times', 'normal');
                 pdf.setTextColor(92, 64, 51);
                 pdf.text('Hometown: ' + formData.cityState, x + width / 2, currentY, { align: 'center' });
-                currentY += 4;
+                currentY += 3;
             }
 
             // Interests section — centered in the gap between the two portrait thumbnails
             if (formData.interests) {
-                currentY += 1;
                 pdf.setFontSize(6.5);
                 pdf.setFont('times', 'bold');
                 pdf.setTextColor(139, 69, 19);
@@ -743,10 +742,10 @@
                 const interestGapWidth = width - 34;
                 const interestLines = pdf.splitTextToSize(formData.interests, interestGapWidth);
                 // Text is centred between portraits so can extend into portrait row; stop above lineage text
-                const maxInterestLines = Math.max(0, Math.floor((y + height - 11 - currentY) / 2.8));
+                const maxInterestLines = Math.max(0, Math.floor((y + height - 9 - currentY) / 2.5));
                 interestLines.slice(0, maxInterestLines).forEach((line) => {
                     pdf.text(line, x + width / 2, currentY, { align: 'center' });
-                    currentY += 2.8;
+                    currentY += 2.5;
                 });
             }
 
