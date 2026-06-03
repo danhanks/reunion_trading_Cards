@@ -841,18 +841,21 @@
 
             const pageWidth = 215.9;
             const pageHeight = 279.4;
-            const cardWidth = 63.5;
-            const cardHeight = 88.9;
-            const spacing = 5;
+            const spacing = 3;
 
             // Calculate positions for 3x3 grid
             const cols = 3;
             const rows = 3;
 
+            // Use a 12mm margin on all sides so cards don't get clipped when printing
+            const margin = 12;
+            const cardWidth = (pageWidth - (2 * margin) - (spacing * (cols - 1))) / cols;
+            const cardHeight = (pageHeight - (2 * margin) - (spacing * (rows - 1))) / rows;
+
             const totalWidth = (cardWidth * cols) + (spacing * (cols - 1));
             const totalHeight = (cardHeight * rows) + (spacing * (rows - 1));
-            const startX = (pageWidth - totalWidth) / 2;
-            const startY = (pageHeight - totalHeight) / 2;
+            const startX = margin;
+            const startY = margin;
 
             // PAGE 1: Draw 9 front-side cards
             for (let row = 0; row < rows; row++) {
