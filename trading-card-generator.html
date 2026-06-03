@@ -700,13 +700,13 @@
             }
 
             // Name section
-            currentY = photoY + photoHeight + 5;
+            currentY = photoY + photoHeight + 3;
             pdf.setFontSize(11);
             pdf.setFont('times', 'bold');
             pdf.setTextColor(61, 40, 23);
             const nameLines = pdf.splitTextToSize(formData.name || 'Your Name', width - 12);
             pdf.text(nameLines, x + width / 2, currentY, { align: 'center' });
-            currentY += nameLines.length * 4.5;
+            currentY += nameLines.length * 4;
 
             // Birthday
             if (formData.birthday) {
